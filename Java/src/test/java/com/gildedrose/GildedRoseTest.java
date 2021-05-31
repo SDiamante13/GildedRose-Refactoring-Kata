@@ -28,6 +28,17 @@ class GildedRoseTest {
         assertEquals(1, app.items[0].quality);
         assertEquals(-1, app.items[0].sellIn);
     }
+
+    @Test
+    void updateQuality_minimumQualityIsZero_forNormalItem() {
+        Item[] items = new Item[]{new Item("normalItem", 2, 0)};
+        GildedRose app = new GildedRose(items);
+
+        app.updateQuality();
+
+        assertEquals(0, app.items[0].quality);
+        assertEquals(1, app.items[0].sellIn);
+    }
     // endregion normal item tests
 
     // region aged brie tests
