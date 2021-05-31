@@ -13,20 +13,17 @@ class GildedRose {
 
         // iterate through list of items, update sellin and quality according to name
         for (int i = 0; i < items.length; i++) {
-            String itemName = items[i].name;
 
-            switch (itemName) {
-                case SULFURAS:
-                    return;
-                case AGED_BRIE:
-                    setItemQuality(items[i], 1);
-                    break;
-                case BACKSTAGE_PASS:
-                    updateQualityForBackstagePass(items[i]);
-                    break;
-                default:
-                    setItemQuality(items[i], -1);
-                    break;
+            if (SULFURAS.equals(items[i].name)) {
+                continue;
+            } else if (AGED_BRIE.equals(items[i].name)) {
+                setItemQuality(items[i], 1);
+            } else if (BACKSTAGE_PASS.equals(items[i].name)) {
+                updateQualityForBackstagePass(items[i]);
+            } else if (items[i].name.contains(CONJURED_ITEM)) {
+                setItemQuality(items[i], -2);
+            } else {
+                setItemQuality(items[i], -1);
             }
 
             items[i].sellIn = items[i].sellIn - 1;
@@ -36,30 +33,30 @@ class GildedRose {
     }
 
     private void setItemQuality(Item item, int qualityDifference) {
-        if (item.quality <= MIN_QUALITY || item.quality >= MAX_QUALITY) return;
+        if (item.quality < MIN_QUALITY || item.quality >= MAX_QUALITY) return;
+        if (item.quality == MIN_QUALITY && !item.name.equals(AGED_BRIE)) return;
         item.quality = item.quality + qualityDifference;
+        if (item.quality > 50) {
+            item.quality = 50;
+        }
     }
 
     private void updateQualityForBackstagePass(Item item) {
-        int difference;
-
         if (item.sellIn > 10) {
-            difference = 1;
+            setItemQuality(item, 1);
         } else if (item.sellIn > 5) {
-            difference = 2;
+            setItemQuality(item, 2);
         } else {
-            difference = 3;
+            setItemQuality(item, 3);
         }
-
-        setItemQuality(item, difference);
     }
 
     private void handleExpiredItem(Item item) {
         if (item.sellIn >= EXPIRATION_DATE) return;
 
-        if (item.name.equals("Aged Brie")) {
+        if (item.name.equals(AGED_BRIE)) {
             setItemQuality(item, 1);
-        } else if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
+        } else if (item.name.equals(BACKSTAGE_PASS)) {
             item.quality = 0;
         } else {
             setItemQuality(item, -1);
