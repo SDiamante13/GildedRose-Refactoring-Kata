@@ -20,7 +20,7 @@ class GildedRose {
 
         if (!item.name.equals("Aged Brie") && !item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
             if (item.quality > 0) {
-                item.quality = item.quality - 1;
+                item.quality -= 1;
             }
         } else {
             updateQualityForAgedBrieAndBackstagePass(item);
@@ -30,15 +30,15 @@ class GildedRose {
 
         if (isExpired(item)) {
             if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-                item.quality = 0;
+                item.quality -= item.quality;
             }
 
-            if (item.name.equals("Aged Brie") && item.quality < 50) {
-                item.quality++;
+            if (item.name.equals("Aged Brie")) {
+                item.quality = item.quality >= 50 ? item.quality : item.quality + 1;
             }
 
             if (isNormalItem(item)) {
-                    item.quality--;
+                item.quality -= 1;
             }
         }
     }
@@ -48,20 +48,27 @@ class GildedRose {
     }
 
     private void updateQualityForAgedBrieAndBackstagePass(Item item) {
-        if (item.quality < 50) {
-            item.quality++;
+        if (item.quality >= 50) {
+            return;
+        }
+        if (item.name.equals("Aged Brie")) {
+            item.quality += 1;
+            return;
+        }
 
-            if (item.name.equals("Backstage passes to a TAFKAL80ETC concert") && item.quality < 50) {
-                if (item.sellIn < 11) {
-                    item.quality = item.quality + 1;
-                }
+        item.quality += 1;
 
-                if (item.sellIn < 6) {
-                    item.quality = item.quality + 1;
-                }
+        if (item.name.equals("Backstage passes to a TAFKAL80ETC concert") && item.quality < 50) {
+            if (item.sellIn < 11) {
+                item.quality += 1;
+            }
+
+            if (item.sellIn < 6) {
+                item.quality += 1;
             }
         }
     }
+
 
     private boolean isExpired(Item item) {
         return item.sellIn < 0;
