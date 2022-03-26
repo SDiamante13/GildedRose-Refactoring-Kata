@@ -1,5 +1,6 @@
 package com.gildedrose;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,18 +29,29 @@ class GildedRoseTest {
         assertEquals(1, app.items[0].quality);
         assertEquals(-1, app.items[0].sellIn);
     }
+
+    @Test
+    void updateQuality_minimumQualityIsZero_forNormalItem() {
+        Item[] items = new Item[]{new Item("normalItem", 2, 0)};
+        GildedRose app = new GildedRose(items);
+
+        app.updateQuality();
+
+        assertEquals(0, app.items[0].quality);
+        assertEquals(1, app.items[0].sellIn);
+    }
     // endregion normal item tests
 
     // region aged brie tests
     @Test
     void updateQuality_increasesQualityBy1_forAgedBrie() {
-        Item[] items = new Item[]{new Item("Aged Brie", 3, 3)};
+        Item[] items = new Item[]{new Item("Aged Brie", 2, 0)};
         GildedRose app = new GildedRose(items);
 
         app.updateQuality();
 
-        assertEquals(4, app.items[0].quality);
-        assertEquals(2, app.items[0].sellIn);
+        assertEquals(1, app.items[0].quality);
+        assertEquals(1, app.items[0].sellIn);
     }
 
     @Test
@@ -113,6 +125,17 @@ class GildedRoseTest {
     }
 
     @Test
+    void updateQuality_maxesOutAtQualityOf50_forBackStagePasses() {
+        Item[] items = new Item[]{new Item("Backstage passes to a TAFKAL80ETC concert", 6, 49)};
+        GildedRose app = new GildedRose(items);
+
+        app.updateQuality();
+
+        assertEquals(50, app.items[0].quality);
+        assertEquals(5, app.items[0].sellIn);
+    }
+
+    @Test
     void updateQuality_decreasesToZeroQuality_forBackStagePasses_whenSellInIsLessThanOrEqualToZero() {
         Item[] items = new Item[]{new Item("Backstage passes to a TAFKAL80ETC concert", 0, 20)};
         GildedRose app = new GildedRose(items);
@@ -123,4 +146,20 @@ class GildedRoseTest {
         assertEquals(-1, app.items[0].sellIn);
     }
     // endregion backstage pass tests
+
+    // region conjured items tests
+
+    @Test
+    @Disabled
+    void updateQuality_decreasesQualityBy2_forConjuredItem() {
+        Item[] items = new Item[]{new Item("Conjured Mana Cake", 3, 10)};
+        GildedRose app = new GildedRose(items);
+
+        app.updateQuality();
+
+        assertEquals(8, app.items[0].quality);
+        assertEquals(2, app.items[0].sellIn);
+    }
+    // endregion conjured items tests
+
 }
