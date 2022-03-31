@@ -16,9 +16,7 @@ class GildedRose {
     private void updateOne(Item item) {
         updateQuality(item);
 
-        if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
-            item.sellIn -= 1;
-        }
+        updateSellIn(item);
 
         if (item.sellIn < 0) {
             updateExpired(item);
@@ -27,52 +25,48 @@ class GildedRose {
 
     private void updateQuality(Item item) {
         if (item.name.equals("Aged Brie")) {
-            updateQualityForAgedBrieAndBackstagePass(item);
+            incrementQuality(item);
         } else if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-            updateQualityForAgedBrieAndBackstagePass(item);
+            incrementQuality(item);
+                if (item.sellIn < 11) {
+                    incrementQuality(item);
+                }
+                if (item.sellIn < 6) {
+                    incrementQuality(item);
+                }
         } else if (item.name.equals("Sulfuras, Hand of Ragnaros")) {
-
         } else {
-            if (item.quality > 0) {
-                item.quality -= 1;
-            }
+            decrementQuality(item);
+        }
+    }
+
+    private void updateSellIn(Item item) {
+        if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
+            item.sellIn -= 1;
         }
     }
 
     private void updateExpired(Item item) {
         if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-            item.quality -= item.quality;
+            item.quality = 0;
         } else if (item.name.equals("Aged Brie")) {
-            item.quality = item.quality >= 50 ? item.quality : item.quality + 1;
+            incrementQuality(item);
         } else if (item.name.equals("Sulfuras, Hand of Ragnaros")) {
         } else {
-            if (item.quality > 0) {
-                item.quality -= 1;
-            }
+            decrementQuality(item);
         }
     }
 
-    private void updateQualityForAgedBrieAndBackstagePass(Item item) {
-        if (item.quality >= 50) {
-            return;
-        }
-        if (item.name.equals("Aged Brie")) {
+    private void incrementQuality(Item item) {
+        if (item.quality < 50) {
             item.quality += 1;
-            return;
-        }
-
-        item.quality += 1;
-
-        if (item.name.equals("Backstage passes to a TAFKAL80ETC concert") && item.quality < 50) {
-            if (item.sellIn < 11) {
-                item.quality += 1;
-            }
-
-            if (item.sellIn < 6) {
-                item.quality += 1;
-            }
         }
     }
 
+    private void decrementQuality(Item item) {
+        if (item.quality > 0) {
+            item.quality -= 1;
+        }
+    }
 
 }
