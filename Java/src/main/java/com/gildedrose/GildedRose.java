@@ -9,45 +9,47 @@ class GildedRose {
 
     public void updateQuality() {
         for (Item item : items) {
-            update(item);
+            updateOne(item);
         }
     }
 
-    private void update(Item item) {
-        if (item.name.equals("Sulfuras, Hand of Ragnaros")) {
-            return;
+    private void updateOne(Item item) {
+        updateQuality(item);
+
+        if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
+            item.sellIn -= 1;
         }
 
-        updateQualityByCategory(item);
-        item.sellIn -= 1;
-
-        if (isExpired(item)) {
-            if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-                item.quality -= item.quality;
-            }
-
-            if (item.name.equals("Aged Brie")) {
-                item.quality = item.quality >= 50 ? item.quality : item.quality + 1;
-            }
-
-            if (isNormalItem(item)) {
-                item.quality -= 1;
-            }
+        if (item.sellIn < 0) {
+            updateExpired(item);
         }
     }
 
-    private void updateQualityByCategory(Item item) {
+    private void updateQuality(Item item) {
         if (item.name.equals("Aged Brie")) {
             updateQualityForAgedBrieAndBackstagePass(item);
         } else if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
             updateQualityForAgedBrieAndBackstagePass(item);
-        } else if (item.quality > 0) {
+        } else if (item.name.equals("Sulfuras, Hand of Ragnaros")) {
+
+        } else {
+            if (item.quality > 0) {
                 item.quality -= 1;
+            }
         }
     }
 
-    private boolean isNormalItem(Item item) {
-        return !item.name.equals("Aged Brie") && !item.name.equals("Backstage passes to a TAFKAL80ETC concert") && item.quality > 0;
+    private void updateExpired(Item item) {
+        if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
+            item.quality -= item.quality;
+        } else if (item.name.equals("Aged Brie")) {
+            item.quality = item.quality >= 50 ? item.quality : item.quality + 1;
+        } else if (item.name.equals("Sulfuras, Hand of Ragnaros")) {
+        } else {
+            if (item.quality > 0) {
+                item.quality -= 1;
+            }
+        }
     }
 
     private void updateQualityForAgedBrieAndBackstagePass(Item item) {
@@ -73,7 +75,4 @@ class GildedRose {
     }
 
 
-    private boolean isExpired(Item item) {
-        return item.sellIn < 0;
-    }
 }
