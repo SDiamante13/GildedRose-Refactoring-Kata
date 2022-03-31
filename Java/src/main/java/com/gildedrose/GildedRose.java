@@ -9,64 +9,124 @@ class GildedRose {
 
     public void updateQuality() {
         for (Item item : items) {
-            updateOne(item);
+            ItemCategory category = categorize(item.name);
+            category.updateOne(item);
         }
     }
 
-    private void updateOne(Item item) {
-        updateQuality(item);
-
-        updateSellIn(item);
-
-        if (item.sellIn < 0) {
-            updateExpired(item);
+    public ItemCategory categorize(String name) {
+        switch (name) {
+            case "Sulfuras, Hand of Ragnaros":
+                return new Legendary();
+            case "Aged Brie":
+                return new Cheese();
+            case "Backstage passes to a TAFKAL80ETC concert":
+                return new BackstagePass();
+            default:
+                return new Normal();
         }
     }
 
-    private void updateQuality(Item item) {
-        if (item.name.equals("Aged Brie")) {
+    public abstract class ItemCategory {
+
+        protected void updateOne(Item item) {
+            updateQuality(item);
+
+            updateSellIn(item);
+
+            if (item.sellIn < 0) {
+                updateExpired(item);
+            }
+        }
+
+        abstract void updateQuality(Item item);
+
+        abstract void updateSellIn(Item item);
+
+        abstract void updateExpired(Item item);
+
+        protected void incrementQuality(Item item) {
+            if (item.quality < 50) {
+                item.quality += 1;
+            }
+        }
+
+        protected void decrementQuality(Item item) {
+            if (item.quality > 0) {
+                item.quality -= 1;
+            }
+        }
+    }
+
+    private class Legendary extends ItemCategory {
+        @Override
+        protected void updateQuality(Item item) {
+        }
+
+        @Override
+        protected void updateSellIn(Item item) {
+        }
+
+        @Override
+        protected void updateExpired(Item item) {
+        }
+    }
+
+    private class Cheese extends ItemCategory {
+
+        @Override
+        protected void updateQuality(Item item) {
             incrementQuality(item);
-        } else if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-            incrementQuality(item);
-                if (item.sellIn < 11) {
-                    incrementQuality(item);
-                }
-                if (item.sellIn < 6) {
-                    incrementQuality(item);
-                }
-        } else if (item.name.equals("Sulfuras, Hand of Ragnaros")) {
-        } else {
-            decrementQuality(item);
         }
-    }
 
-    private void updateSellIn(Item item) {
-        if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
+        @Override
+        protected void updateSellIn(Item item) {
             item.sellIn -= 1;
         }
+
+        @Override
+        protected void updateExpired(Item item) {
+            incrementQuality(item);
+        }
     }
 
-    private void updateExpired(Item item) {
-        if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-            item.quality = 0;
-        } else if (item.name.equals("Aged Brie")) {
+    private class BackstagePass extends ItemCategory {
+        @Override
+        protected void updateQuality(Item item) {
             incrementQuality(item);
-        } else if (item.name.equals("Sulfuras, Hand of Ragnaros")) {
-        } else {
+            if (item.sellIn < 11) {
+                incrementQuality(item);
+            }
+            if (item.sellIn < 6) {
+                incrementQuality(item);
+            }
+        }
+
+        @Override
+        protected void updateSellIn(Item item) {
+            item.sellIn -= 1;
+        }
+
+        @Override
+        protected void updateExpired(Item item) {
+            item.quality = 0;
+        }
+    }
+
+    private class Normal extends ItemCategory {
+        @Override
+        protected void updateQuality(Item item) {
+            decrementQuality(item);
+        }
+
+        @Override
+        protected void updateSellIn(Item item) {
+            item.sellIn -= 1;
+        }
+
+        @Override
+        protected void updateExpired(Item item) {
             decrementQuality(item);
         }
     }
-
-    private void incrementQuality(Item item) {
-        if (item.quality < 50) {
-            item.quality += 1;
-        }
-    }
-
-    private void decrementQuality(Item item) {
-        if (item.quality > 0) {
-            item.quality -= 1;
-        }
-    }
-
 }
