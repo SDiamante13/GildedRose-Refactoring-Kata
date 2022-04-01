@@ -150,7 +150,6 @@ class GildedRoseTest {
     // region conjured items tests
 
     @Test
-    @Disabled
     void updateQuality_decreasesQualityBy2_forConjuredItem() {
         Item[] items = new Item[]{new Item("Conjured Mana Cake", 3, 10)};
         GildedRose app = new GildedRose(items);
@@ -159,6 +158,17 @@ class GildedRoseTest {
 
         assertEquals(8, app.items[0].quality);
         assertEquals(2, app.items[0].sellIn);
+    }
+
+    @Test
+    void updateQuality_decreasesQualityBy2WhenExpired_forConjuredItem() {
+        Item[] items = new Item[]{new Item("Conjured Mana Cake", -1, 10)};
+        GildedRose app = new GildedRose(items);
+
+        app.updateQuality();
+
+        assertEquals(6, app.items[0].quality);
+        assertEquals(-2, app.items[0].sellIn);
     }
     // endregion conjured items tests
 
