@@ -1,10 +1,48 @@
 package com.gildedrose;
 
+import java.security.cert.CertPathBuilder;
+
+import static com.gildedrose.ItemTestDataBuilder.anItem;
+
+class ItemTestDataBuilder {
+
+    private String name;
+    private int sellIn;
+    private int quality;
+
+    public static ItemTestDataBuilder anItem() {
+        return new ItemTestDataBuilder();
+    }
+
+    public ItemTestDataBuilder withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public ItemTestDataBuilder expiresIn(int sellIn) {
+        this.sellIn = sellIn;
+        return this;
+    }
+
+    public ItemTestDataBuilder withQuality(int quality) {
+        this.quality = quality;
+        return this;
+    }
+
+    public Item build() {
+        return new Item(name, sellIn, quality);
+    }
+}
+
 public class ItemPrinter {
 
     public static String printQualityOverNDays(int days) {
         Item[] items = new Item[]{
-            new Item("+5 Dexterity Vest", 10, 20),
+            anItem()
+                .withName("+5 Dexterity Vest")
+                .expiresIn(10)
+                .withQuality(20)
+                .build(),
             new Item("Aged Brie", 2, 0),
             new Item("Elixir of the Mongoose", 5, 7),
             new Item("Sulfuras, Hand of Ragnaros", 0, 80),
